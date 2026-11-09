@@ -1,0 +1,418 @@
+--
+-- PostgreSQL database dump
+--
+
+\restrict 8kVBWtb9RxhIybN0Onu4EjtyfXSLXzbxnd9IKjL34fDMWaIurv1JlS964ODyF0h
+
+-- Dumped from database version 18.6
+-- Dumped by pg_dump version 18.6
+
+-- Started on 2026-11-09 07:05:37
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'BIG5';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 219 (class 1259 OID 16559)
+-- Name: asiento; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.asiento (
+    idasiento bigint NOT NULL,
+    fila character varying(10) NOT NULL,
+    numero character varying(10) NOT NULL,
+    zona character varying(50),
+    idrecinto bigint NOT NULL,
+    numeracion integer,
+    tiposector character varying(50),
+    estado character varying(50),
+    precio real,
+    idfuncion integer,
+    nombre character varying(50),
+    idevento integer,
+    " numero" integer
+);
+
+
+ALTER TABLE public.asiento OWNER TO postgres;
+
+--
+-- TOC entry 220 (class 1259 OID 16566)
+-- Name: asiento_idasiento_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.asiento ALTER COLUMN idasiento ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.asiento_idasiento_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 221 (class 1259 OID 16567)
+-- Name: categoria; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.categoria (
+    idcategoria bigint NOT NULL,
+    categoria character varying(100) NOT NULL
+);
+
+
+ALTER TABLE public.categoria OWNER TO postgres;
+
+--
+-- TOC entry 222 (class 1259 OID 16572)
+-- Name: categoria_idcategoria_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.categoria ALTER COLUMN idcategoria ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.categoria_idcategoria_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 223 (class 1259 OID 16573)
+-- Name: evento; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.evento (
+    idevento bigint NOT NULL,
+    nombre character varying(150) NOT NULL,
+    descripcion character varying(500),
+    idcategoria bigint NOT NULL,
+    idrecinto integer
+);
+
+
+ALTER TABLE public.evento OWNER TO postgres;
+
+--
+-- TOC entry 224 (class 1259 OID 16581)
+-- Name: evento_idevento_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.evento ALTER COLUMN idevento ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.evento_idevento_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 225 (class 1259 OID 16582)
+-- Name: funcion; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.funcion (
+    idfuncion bigint NOT NULL,
+    fecha date NOT NULL,
+    hora time without time zone NOT NULL,
+    idevento bigint NOT NULL,
+    idrecinto bigint NOT NULL,
+    estado character varying(30) DEFAULT 'programada'::character varying,
+    fechahora character varying(50)
+);
+
+
+ALTER TABLE public.funcion OWNER TO postgres;
+
+--
+-- TOC entry 226 (class 1259 OID 16591)
+-- Name: funcion_idfuncion_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.funcion ALTER COLUMN idfuncion ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.funcion_idfuncion_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 227 (class 1259 OID 16592)
+-- Name: pago; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.pago (
+    idpago bigint NOT NULL,
+    fecha date DEFAULT CURRENT_DATE,
+    hora time without time zone DEFAULT CURRENT_TIME,
+    montototal numeric(10,2) NOT NULL,
+    metodopago character varying(50) NOT NULL,
+    estado character varying(30) DEFAULT 'pendiente'::character varying,
+    idusuario bigint NOT NULL,
+    CONSTRAINT pago_montototal_check CHECK ((montototal >= (0)::numeric))
+);
+
+
+ALTER TABLE public.pago OWNER TO postgres;
+
+--
+-- TOC entry 228 (class 1259 OID 16603)
+-- Name: pago_idpago_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.pago ALTER COLUMN idpago ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.pago_idpago_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 229 (class 1259 OID 16604)
+-- Name: recinto; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.recinto (
+    idrecinto bigint NOT NULL,
+    nombre character varying(150) NOT NULL,
+    direccion character varying(255),
+    ciudad character varying(100),
+    capacidadtotal integer,
+    capacidad integer
+);
+
+
+ALTER TABLE public.recinto OWNER TO postgres;
+
+--
+-- TOC entry 230 (class 1259 OID 16611)
+-- Name: recinto_idrecinto_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.recinto ALTER COLUMN idrecinto ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.recinto_idrecinto_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 231 (class 1259 OID 16612)
+-- Name: tarifa; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.tarifa (
+    idtarifa bigint NOT NULL,
+    precio numeric(10,2) NOT NULL,
+    estado character varying(30) DEFAULT 'activa'::character varying,
+    idfuncion bigint NOT NULL,
+    idasiento bigint NOT NULL,
+    nombre character varying(50),
+    idevento integer,
+    fechahora character varying(50),
+    idrecinto integer,
+    monto real,
+    descripcion character varying(50),
+    CONSTRAINT tarifa_precio_check CHECK ((precio >= (0)::numeric))
+);
+
+
+ALTER TABLE public.tarifa OWNER TO postgres;
+
+--
+-- TOC entry 232 (class 1259 OID 16621)
+-- Name: tarifa_idtarifa_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.tarifa ALTER COLUMN idtarifa ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.tarifa_idtarifa_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 233 (class 1259 OID 16622)
+-- Name: tique; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.tique (
+    idtique bigint NOT NULL,
+    codigo character varying(100) NOT NULL,
+    preciopagado numeric(10,2) NOT NULL,
+    fechaemision timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    estado character varying(30) DEFAULT 'emitido'::character varying,
+    idprecio bigint NOT NULL,
+    idpago bigint NOT NULL,
+    idusuario bigint NOT NULL,
+    CONSTRAINT tique_preciopagado_check CHECK ((preciopagado >= (0)::numeric))
+);
+
+
+ALTER TABLE public.tique OWNER TO postgres;
+
+--
+-- TOC entry 234 (class 1259 OID 16634)
+-- Name: tique_idtique_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.tique ALTER COLUMN idtique ADD GENERATED BY DEFAULT AS IDENTITY (
+    SEQUENCE NAME public.tique_idtique_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 235 (class 1259 OID 16635)
+-- Name: usuario; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.usuario (
+    idusuario bigint NOT NULL,
+    nombre character varying(100) NOT NULL,
+    apellido character varying(100) NOT NULL,
+    correo character varying(150) NOT NULL,
+    telefono character varying(20),
+    usuario character varying(50) NOT NULL,
+    clave character varying(255) NOT NULL,
+    fecharegistro date DEFAULT CURRENT_DATE,
+    estado character varying(30) DEFAULT 'activo'::character varying
+);
+
+
+ALTER TABLE public.usuario OWNER TO postgres;
+
+--
+-- TOC entry 236 (class 1259 OID 16648)
+-- Name: usuario_idusuario_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.usuario ALTER COLUMN idusuario ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.usuario_idusuario_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 5093 (class 0 OID 16559)
+-- Dependencies: 219
+-- Data for Name: asiento; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.asiento (idasiento, fila, numero, zona, idrecinto, numeracion, tiposector, estado, precio, idfuncion, nombre, idevento, " numero") FROM stdin;
+97	A	22	Preferencial	1	\N	\N	\N	\N	\N	\N	\N	\N
+98	B	33	General	3	\N	\N	\N	\N	\N	\N	\N	\N
+99	C	109	General	1	\N	\N	\N	\N	\N	\N	\N	\N
+100	D	113	Preferencial	3	\N	\N	\N	\N	\N	\N	\N	\N
+101	E	197	Platea	4	\N	\N	\N	\N	\N	\N	\N	\N
+102	F	67	Preferencial	4	\N	\N	\N	\N	\N	\N	\N	\N
+103	G	40	Platea	3	\N	\N	\N	\N	\N	\N	\N	\N
+104	H	43	Preferencial	5	\N	\N	\N	\N	\N	\N	\N	\N
+105	I	91	Preferencial	1	\N	\N	\N	\N	\N	\N	\N	\N
+106	J	147	VIP	3	\N	\N	\N	\N	\N	\N	\N	\N
+107	A	15	VIP	1	\N	\N	\N	\N	\N	\N	\N	\N
+108	B	39	Platea	5	\N	\N	\N	\N	\N	\N	\N	\N
+109	C	127	Platea	3	\N	\N	\N	\N	\N	\N	\N	\N
+110	D	178	VIP	1	\N	\N	\N	\N	\N	\N	\N	\N
+111	E	22	Preferencial	3	\N	\N	\N	\N	\N	\N	\N	\N
+112	F	154	Preferencial	4	\N	\N	\N	\N	\N	\N	\N	\N
+113	G	173	Platea	3	\N	\N	\N	\N	\N	\N	\N	\N
+114	H	71	Platea	5	\N	\N	\N	\N	\N	\N	\N	\N
+115	I	30	Preferencial	3	\N	\N	\N	\N	\N	\N	\N	\N
+116	J	35	Platea	1	\N	\N	\N	\N	\N	\N	\N	\N
+117	A	157	Preferencial	2	\N	\N	\N	\N	\N	\N	\N	\N
+118	B	65	Preferencial	2	\N	\N	\N	\N	\N	\N	\N	\N
+119	C	136	Preferencial	2	\N	\N	\N	\N	\N	\N	\N	\N
+120	D	79	Platea	2	\N	\N	\N	\N	\N	\N	\N	\N
+121	E	78	Preferencial	1	\N	\N	\N	\N	\N	\N	\N	\N
+122	F	153	Preferencial	1	\N	\N	\N	\N	\N	\N	\N	\N
+123	G	190	Platea	1	\N	\N	\N	\N	\N	\N	\N	\N
+124	H	35	VIP	5	\N	\N	\N	\N	\N	\N	\N	\N
+125	I	72	General	5	\N	\N	\N	\N	\N	\N	\N	\N
+126	J	105	General	4	\N	\N	\N	\N	\N	\N	\N	\N
+127	A	39	VIP	4	\N	\N	\N	\N	\N	\N	\N	\N
+128	B	164	Preferencial	4	\N	\N	\N	\N	\N	\N	\N	\N
+129	C	98	Preferencial	4	\N	\N	\N	\N	\N	\N	\N	\N
+130	D	167	VIP	4	\N	\N	\N	\N	\N	\N	\N	\N
+131	E	176	VIP	1	\N	\N	\N	\N	\N	\N	\N	\N
+132	F	104	General	5	\N	\N	\N	\N	\N	\N	\N	\N
+133	G	110	VIP	3	\N	\N	\N	\N	\N	\N	\N	\N
+134	H	88	Preferencial	2	\N	\N	\N	\N	\N	\N	\N	\N
+135	I	67	Preferencial	1	\N	\N	\N	\N	\N	\N	\N	\N
+136	J	178	VIP	3	\N	\N	\N	\N	\N	\N	\N	\N
+137	A	188	General	1	\N	\N	\N	\N	\N	\N	\N	\N
+138	B	82	Preferencial	2	\N	\N	\N	\N	\N	\N	\N	\N
+139	C	110	Platea	1	\N	\N	\N	\N	\N	\N	\N	\N
+140	D	41	Preferencial	5	\N	\N	\N	\N	\N	\N	\N	\N
+141	E	158	General	3	\N	\N	\N	\N	\N	\N	\N	\N
+142	F	26	General	4	\N	\N	\N	\N	\N	\N	\N	\N
+143	G	187	VIP	5	\N	\N	\N	\N	\N	\N	\N	\N
+144	H	169	Platea	4	\N	\N	\N	\N	\N	\N	\N	\N
+145	I	23	VIP	2	\N	\N	\N	\N	\N	\N	\N	\N
+146	J	61	General	4	\N	\N	\N	\N	\N	\N	\N	\N
+147	A	115	General	2	\N	\N	\N	\N	\N	\N	\N	\N
+148	B	10	Preferencial	1	\N	\N	\N	\N	\N	\N	\N	\N
+149	C	190	General	3	\N	\N	\N	\N	\N	\N	\N	\N
+150	D	172	Preferencial	4	\N	\N	\N	\N	\N	\N	\N	\N
+151	E	138	General	1	\N	\N	\N	\N	\N	\N	\N	\N
+152	F	22	Platea	4	\N	\N	\N	\N	\N	\N	\N	\N
+153	G	82	Platea	1	\N	\N	\N	\N	\N	\N	\N	\N
+154	H	104	Platea	2	\N	\N	\N	\N	\N	\N	\N	\N
+155	I	109	Platea	3	\N	\N	\N	\N	\N	\N	\N	\N
+156	J	111	Platea	1	\N	\N	\N	\N	\N	\N	\N	\N
+\.
+
+
+--
+-- TOC entry 5095 (class 0 OID 16567)
+-- Dependencies: 221
+-- Data for Name: categoria; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.categoria (idcategoria, categoria) FROM stdin;
+1	Musicales
+2	Festivales
+3	Comedia
+4	Teatro
+5	Cine
+6	Danza
+\.
+
+
